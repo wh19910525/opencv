@@ -3,7 +3,6 @@
 #author:nexgo
 #############################
 
-Param1=${1}
 pc_out="pc_out"
 android_out="android_out"
 
@@ -11,13 +10,14 @@ android_out="android_out"
 #
 # Wang Hai's commonly used linux commands.
 #
-if [ -z ${WANGHAI_USUAL_SHELL_CMD} ];then
+if [ -z ${WANGHAI_USUAL_SHELL_CMD} ] || [ ! -e ${WANGHAI_USUAL_SHELL_CMD} ];then
     echo -en "\033[32m"
     echo "please import Wang Hai's commonly used linux commands."
     echo -en "\033[0m"
 
-    exit 4
+    exit 45
 else
+    echo "import [${WANGHAI_USUAL_SHELL_CMD}]"
     source ${WANGHAI_USUAL_SHELL_CMD}
 fi
 
@@ -31,6 +31,7 @@ android_version_cmd="cmake \
     -DANDROID_NDK=${NDK_ROOT} \
     -DANDROID_SDK_ROOT=${SDK_ROOT} \
     -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+    -DBUILD_ANDROID_PROJECTS=OFF \
     .."
 
 ##########################################
@@ -46,11 +47,15 @@ print_color "Please input your arch:"
 read cpu_arch_name
 
 if [ x${cpu_arch_name} == xandroid  -o x${cpu_arch_name} == x1 ];then
-    print_color "start build android version ..."
+    if [ -z ${NDK_ROOT} ] || [ ! -e ${NDK_ROOT} ];then
+        print_color "[${NDK_ROOT}] do not exist."
+        exit 1
+    fi
+    print_color "start build [android] version ..."
     out_dir=${android_out}
     cmake_cmd=${android_version_cmd}
 else
-    print_color "start build pc version ..."
+    print_color "start build [pc] version ..."
     out_dir=${pc_out}
     cmake_cmd=${pc_version_cmd}
 fi
