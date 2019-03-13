@@ -69,7 +69,7 @@ exec_cmd ${cmake_cmd}
 
 exec_cmd "make -j28"
 
-exec_cmd "make install"
+exec_cmd "sudo make install"
 
 cd -
 
